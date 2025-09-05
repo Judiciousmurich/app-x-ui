@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, ChefHat } from 'lucide-react';
-import { useUser } from '../../../context/UserContext';
-import Image from 'next/image';
+import { useUser } from '@/context/UserContext';
 
 const Login: React.FC = () => {
     const [formData, setFormData] = useState({

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Check, Star, ArrowRight } from 'lucide-react';
-import { useCart, Plan } from '../../context/CartContext';
 import { useRouter } from 'next/navigation';
+import { Plan, useCart } from '@/context/CartContext';
 
 const Plans: React.FC = () => {
   const { selectPlan } = useCart();
@@ -124,7 +124,7 @@ const Plans: React.FC = () => {
             <span className="text-primary-600">Culinary Experience</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            From intimate private dinners to large corporate events, we have the perfect 
+            From intimate private dinners to large corporate events, we have the perfect
             catering solution for every occasion.
           </p>
         </div>
@@ -145,7 +145,7 @@ const Plans: React.FC = () => {
                 <p className="text-gray-600 leading-relaxed mb-4">
                   {plan.description}
                 </p>
-                
+
                 <div className="flex items-baseline space-x-2">
                   <span className="text-4xl font-bold text-primary-600">
                     {plan.price.toLocaleString()}
@@ -155,7 +155,7 @@ const Plans: React.FC = () => {
                     <span className="text-sm text-gray-400">/ {plan.mealsPerWeek} meals</span>
                   )}
                 </div>
-                
+
                 <p className="text-sm text-secondary-600 mt-2 font-medium">
                   Crypto payments accepted
                 </p>

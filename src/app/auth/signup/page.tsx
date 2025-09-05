@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, User, Phone, ChefHat } from 'lucide-react';
-import { useUser } from '../../../context/UserContext';
+import { useUser } from '@/context/UserContext';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
