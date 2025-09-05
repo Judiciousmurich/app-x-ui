@@ -142,7 +142,7 @@ const UserDashboard: React.FC = () => {
 
                 {/* Upcoming Meals */}
                 <div className="bg-white rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">This Week's Menu</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">This Week&#39;s Menu</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {upcomingMeals.map((meal, index) => (
                       <motion.div

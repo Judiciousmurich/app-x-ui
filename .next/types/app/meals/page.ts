@@ -1,4 +1,4 @@
-// File: C:\Users\amosm\Documents\builds\CI\foodie-kitchen\app-x-ui\app\meals\page.tsx
+// File: C:\Users\amosm\Documents\builds\CI\foodie-kitchen\foodie-kitchen\app\meals\page.tsx
 import * as entry from '../../../../app/meals/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
