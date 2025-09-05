@@ -41,6 +41,11 @@ const Plans: React.FC = () => {
     setSelectedPlanForPayment(null);
   };
 
+  const handlePayNow = (plan: Plan) => {
+    setSelectedPlanForPayment(plan);
+    setShowPaymentModal(true);
+  };
+
   const isSubscribed = (planId: string) => {
     return user?.subscription?.planId === planId && user?.subscription?.status === 'active';
   };
@@ -204,67 +209,6 @@ const Plans: React.FC = () => {
                     Subscribe Now
                   </button>
                 )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Additional Info */}
-        <div className="mt-20 text-center bg-white rounded-2xl p-12 shadow-lg">
-          <div className="flex items-center justify-center mb-6">
-            <Star className="h-8 w-8 text-yellow-400 fill-current" />
-            <Star className="h-8 w-8 text-yellow-400 fill-current" />
-            <Star className="h-8 w-8 text-yellow-400 fill-current" />
-            <Star className="h-8 w-8 text-yellow-400 fill-current" />
-            <Star className="h-8 w-8 text-yellow-400 fill-current" />
-          </div>
-          <h3 className="text-3xl font-bold text-gray-800 mb-4">
-            Trusted by Over 5,000+ Customers
-          </h3>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join Kenya's largest community of food enthusiasts who trust us with their dining experiences.
-          </p>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-primary-600 mb-2">500+</div>
-              <div className="text-gray-600">Events Catered</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-secondary-600 mb-2">50,000+</div>
-              <div className="text-gray-600">Meals Delivered</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent-600 mb-2">98%</div>
-              <div className="text-gray-600">Customer Satisfaction</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Modal */}
-      {showPaymentModal && selectedPlanForPayment && (
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => {
-            setShowPaymentModal(false);
-            setSelectedPlanForPayment(null);
-          }}
-          amount={selectedPlanForPayment.price}
-          currency={selectedPlanForPayment.currency}
-          type="subscription"
-          itemName={selectedPlanForPayment.name}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
-    </div>
-  );
-};
-                <button
-                  onClick={() => handlePayNow(plan)}
-                  className="w-full bg-secondary-600 hover:bg-secondary-700 text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
-                >
-                  Pay Now
-                </button>
               </div>
             </div>
           ))}
