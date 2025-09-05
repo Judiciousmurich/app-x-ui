@@ -8,10 +8,12 @@ interface User {
   email: string;
   phone: string;
   subscription?: {
+    planId: string;
     plan: string;
     status: 'active' | 'paused' | 'cancelled';
     renewalDate: string;
     mealsRemaining: number;
+    startDate: string;
   };
 }
 

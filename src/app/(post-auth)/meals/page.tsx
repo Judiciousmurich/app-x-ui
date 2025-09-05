@@ -2,27 +2,40 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Plus, Minus, ShoppingCart, Filter } from 'lucide-react';
-import { useCart } from '../../../context/CartContext';
+import { Plus, Minus, ShoppingCart, Filter, Lock } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { useUser } from '@/context/UserContext';
 import { Meal } from '@/types';
 import { useRouter } from 'next/navigation';
-import { mockMeals } from '@/data/mockData';
+import { mockMeals, mockPlans } from '@/data/mockData';
 import PaymentModal from '@/components/PaymentModal';
 
 const MealSelection: React.FC = () => {
   const { state, addMeal, removeMeal } = useCart();
+  const { user } = useUser();
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedMealForPayment, setSelectedMealForPayment] = useState<Meal | null>(null);
 
-  const meals = mockMeals.filter(meal => meal.isActive);
+  // Get user's subscribed plan
+  const userPlan = user?.subscription?.planId 
+    ? mockPlans.find(plan => plan.id === user.subscription?.planId)
+    : null;
 
-  const dietaryFilters = ['All', 'Vegetarian', 'Vegan', 'Protein-Rich', 'Comfort Food', 'Light & Fresh'];
+  // Show only meals from user's plan if they have an active subscription
+  const availableMeals = userPlan && user?.subscription?.status === 'active'
+    ? userPlan.meals.filter(meal => meal.isActive)
+    : [];
+
+  // All meals for individual purchase (if user doesn't have active subscription)
+  const allMeals = mockMeals.filter(meal => meal.isActive);
+
+  const dietaryFilters = ['All', 'Traditional', 'Vegetarian', 'Protein-Rich', 'Comfort Food', 'Seafood'];
 
   const filteredMeals = selectedFilter === 'All' 
-    ? meals 
-    : meals.filter(meal => meal.dietary.includes(selectedFilter));
+    ? (userPlan ? availableMeals : allMeals)
+    : (userPlan ? availableMeals : allMeals).filter(meal => meal.dietary.includes(selectedFilter));
 
   const getItemQuantity = (mealId: string) => {
     const item = state.items.find(item => item.meal.id === mealId);
@@ -30,6 +43,14 @@ const MealSelection: React.FC = () => {
   };
 
   const handleAddMeal = (meal: Meal) => {
+    // Check if user has reached their meal limit for the week
+    if (userPlan && user?.subscription?.status === 'active') {
+      const totalMealsInCart = state.totalItems;
+      if (totalMealsInCart >= userPlan.mealsPerWeek) {
+        alert(`You can only select ${userPlan.mealsPerWeek} meals per week with your ${userPlan.name} plan.`);
+        return;
+      }
+    }
     addMeal(meal);
   };
 
@@ -42,6 +63,11 @@ const MealSelection: React.FC = () => {
   };
 
   const handleBuyNow = (meal: Meal) => {
+    // Only allow individual purchases if user doesn't have active subscription
+    if (userPlan && user?.subscription?.status === 'active') {
+      alert('You already have an active subscription. Use "Add to Cart" to select meals from your plan.');
+      return;
+    }
     setSelectedMealForPayment(meal);
     setShowPaymentModal(true);
   };
@@ -50,6 +76,82 @@ const MealSelection: React.FC = () => {
     alert(`Payment successful! You've purchased ${selectedMealForPayment?.name}`);
     setSelectedMealForPayment(null);
   };
+
+  // If user doesn't have active subscription, show subscription prompt
+  if (!userPlan || user?.subscription?.status !== 'active') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-2xl p-12 shadow-lg">
+            <Lock className="h-16 w-16 text-gray-400 mx-auto mb-6" />
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Subscribe to Access Meals
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              You need an active subscription to access our meal selection. 
+              Choose from our variety of plans to get started.
+            </p>
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => router.push('/plans')}
+                className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105"
+              >
+                View Subscription Plans
+              </button>
+              
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Or purchase individual meals:
+                </h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {allMeals.slice(0, 3).map((meal) => (
+                    <div key={meal.id} className="bg-gray-50 rounded-xl p-4">
+                      <Image
+                        src={meal.image}
+                        alt={meal.name}
+                        width={200}
+                        height={120}
+                        className="w-full h-24 object-cover rounded-lg mb-3"
+                      />
+                      <h4 className="font-semibold text-gray-800 mb-2">{meal.name}</h4>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-primary-600">
+                          KES {meal.price.toLocaleString()}
+                        </span>
+                        <button
+                          onClick={() => handleBuyNow(meal)}
+                          className="bg-secondary-600 hover:bg-secondary-700 text-white px-3 py-1 rounded-lg text-sm transition-colors"
+                        >
+                          Buy Now
+                        {userPlan ? 'Included' : `KES ${(item.meal.price * item.quantity).toLocaleString()}`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Payment Modal for individual purchases */}
+        {showPaymentModal && selectedMealForPayment && (
+          <PaymentModal
+            isOpen={showPaymentModal}
+            onClose={() => {
+              setShowPaymentModal(false);
+              setSelectedMealForPayment(null);
+            }}
+            amount={selectedMealForPayment.price}
+            currency="KES"
+            type="meal"
+            itemName={selectedMealForPayment.name}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
+        )}
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 py-12">
@@ -57,29 +159,30 @@ const MealSelection: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
-            Choose Your
+            Select Your Weekly
             <br />
             <span className="text-primary-600">Delicious Meals</span>
           </h1>
           
-          {state.selectedPlan && (
+          {userPlan && (
             <div className="bg-white rounded-xl p-4 mb-6 inline-block shadow-lg">
               <p className="text-lg font-semibold text-gray-800">
-                Selected Plan: <span className="text-primary-600">{state.selectedPlan.name}</span>
+                Your Plan: <span className="text-primary-600">{userPlan.name}</span>
               </p>
-              {state.selectedPlan.mealsPerWeek > 0 && (
-                <p className="text-sm text-gray-600">
-                  Choose {state.selectedPlan.mealsPerWeek} meals for this week
-                </p>
-              )}
+              <p className="text-sm text-gray-600">
+                Choose {userPlan.mealsPerWeek} meals for this week
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Meals remaining: {user?.subscription?.mealsRemaining || 0}
+              </p>
             </div>
           )}
 
           {/* Progress Counter */}
-          {state.selectedPlan && state.selectedPlan.mealsPerWeek > 0 && (
+          {userPlan && (
             <div className="bg-primary-600 text-white rounded-xl p-4 mb-6 inline-block">
               <p className="text-lg font-semibold">
-                Meals Chosen: {state.totalItems}/{state.selectedPlan.mealsPerWeek}
+                Meals Chosen: {state.totalItems}/{userPlan.mealsPerWeek}
               </p>
             </div>
           )}
@@ -241,22 +344,29 @@ const MealSelection: React.FC = () => {
               <div className="flex justify-between items-center mb-4">
                 <span className="font-bold text-gray-800">Total:</span>
                 <span className="font-bold text-primary-600 text-lg">
-                  KES {state.totalPrice.toLocaleString()}
+                  {userPlan 
+                    ? `${state.totalItems}/${userPlan.mealsPerWeek} meals selected`
+                    : `KES ${state.totalPrice.toLocaleString()}`
+                  }
                 </span>
               </div>
               
               <button
                 onClick={handleProceedToCheckout}
                 className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                disabled={userPlan && state.totalItems !== userPlan.mealsPerWeek}
               >
-                Proceed to Checkout
+                {userPlan 
+                  ? `Confirm Selection (${state.totalItems}/${userPlan.mealsPerWeek})`
+                  : 'Proceed to Checkout'
+                }
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Payment Modal */}
+      {/* Payment Modal for individual purchases */}
       {showPaymentModal && selectedMealForPayment && (
         <PaymentModal
           isOpen={showPaymentModal}
