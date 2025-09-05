@@ -124,7 +124,7 @@ const MealSelection: React.FC = () => {
                           className="bg-secondary-600 hover:bg-secondary-700 text-white px-3 py-1 rounded-lg text-sm transition-colors"
                         >
                           Buy Now
-                        {userPlan ? 'Included' : `KES ${(item.meal.price * item.quantity).toLocaleString()}`}
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -334,7 +334,7 @@ const MealSelection: React.FC = () => {
                     </div>
                   </div>
                   <span className="font-semibold text-primary-600 text-sm">
-                    KES {(item.meal.price * item.quantity).toLocaleString()}
+                    {userPlan ? 'Included' : `KES ${(item.meal.price * item.quantity).toLocaleString()}`}
                   </span>
                 </div>
               ))}
