@@ -3,116 +3,34 @@
 import React from 'react';
 import { Check, Star, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Plan, useCart } from '@/context/CartContext';
+import { useCart } from '@/context/CartContext';
+import { Plan } from '@/types';
+import { mockPlans } from '@/data/mockData';
+import PaymentModal from '@/components/PaymentModal';
 
 const Plans: React.FC = () => {
   const { selectPlan } = useCart();
   const router = useRouter();
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
+  const [selectedPlanForPayment, setSelectedPlanForPayment] = React.useState<Plan | null>(null);
 
-  const plans: Plan[] = [
-    {
-      id: 'premium-catering',
-      name: 'Premium Catering',
-      description: 'Luxury dining experiences for special occasions and events',
-      price: 15000,
-      currency: 'KES',
-      mealsPerWeek: 0,
-      benefits: [
-        'Gourmet menu selection',
-        'Professional presentation',
-        'Customizable portions',
-        'Dedicated event coordinator',
-        'Premium ingredients',
-        'Full service setup'
-      ]
-    },
-    {
-      id: 'corporate-catering',
-      name: 'Corporate Catering',
-      description: 'Professional meal solutions for your business needs',
-      price: 8500,
-      currency: 'KES',
-      mealsPerWeek: 5,
-      benefits: [
-        'Healthy meal options',
-        'Flexible delivery schedules',
-        'Bulk pricing discounts',
-        'Dietary accommodations',
-        'Monthly menu planning',
-        'Invoice billing options'
-      ]
-    },
-    {
-      id: 'social-events',
-      name: 'Social Events',
-      description: 'Perfect catering for parties, gatherings, and celebrations',
-      price: 12000,
-      currency: 'KES',
-      mealsPerWeek: 0,
-      benefits: [
-        'Party-perfect presentations',
-        'Finger foods & appetizers',
-        'Themed menu options',
-        'Flexible serving sizes',
-        'Setup & cleanup included',
-        'Last-minute booking available'
-      ]
-    },
-    {
-      id: 'private-parties',
-      name: 'Private Parties',
-      description: 'Intimate dining experiences for your personal celebrations',
-      price: 18000,
-      currency: 'KES',
-      mealsPerWeek: 0,
-      benefits: [
-        'Personalized menu creation',
-        'Chef service available',
-        'Premium table settings',
-        'Wine pairing suggestions',
-        'Custom dietary options',
-        'Full-service experience'
-      ]
-    },
-    {
-      id: 'canteen-management',
-      name: 'Canteen Management',
-      description: 'Complete food service management for institutions',
-      price: 25000,
-      currency: 'KES',
-      mealsPerWeek: 21,
-      benefits: [
-        'Daily fresh meal preparation',
-        'Nutritional meal planning',
-        'Cost-effective solutions',
-        'Health & safety compliance',
-        'Staff training included',
-        'Quality assurance program'
-      ]
-    },
-    {
-      id: 'nutritional-consultation',
-      name: 'Nutritional Consultation',
-      description: 'Expert guidance for healthy, balanced meal planning',
-      price: 5000,
-      currency: 'KES',
-      mealsPerWeek: 3,
-      benefits: [
-        'Personalized nutrition plans',
-        'Health goal alignment',
-        'Dietary restriction support',
-        'Monthly progress reviews',
-        'Recipe recommendations',
-        'Ongoing support access'
-      ]
-    }
-  ];
+  const plans = mockPlans.filter(plan => plan.isActive);
 
   const handleSubscribe = (plan: Plan) => {
     selectPlan(plan);
     router.push('/meals');
   };
 
+  const handlePayNow = (plan: Plan) => {
+    setSelectedPlanForPayment(plan);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = (paymentData: any) => {
+    alert(`Payment successful! You've subscribed to ${selectedPlanForPayment?.name}`);
+    setSelectedPlanForPayment(null);
+    // Here you would typically update the user's subscription status
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,13 +92,22 @@ const Plans: React.FC = () => {
               </div>
 
               {/* Subscribe Button */}
-              <button
-                onClick={() => handleSubscribe(plan)}
-                className="w-full group bg-primary-600 hover:bg-primary-700 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2"
-              >
-                <span>Subscribe Now</span>
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => handleSubscribe(plan)}
+                  className="w-full group bg-primary-600 hover:bg-primary-700 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2"
+                >
+                  <span>Subscribe & Choose Meals</span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                
+                <button
+                  onClick={() => handlePayNow(plan)}
+                  className="w-full bg-secondary-600 hover:bg-secondary-700 text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                >
+                  Pay Now
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -216,6 +143,22 @@ const Plans: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedPlanForPayment && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedPlanForPayment(null);
+          }}
+          amount={selectedPlanForPayment.price}
+          currency={selectedPlanForPayment.currency}
+          type="subscription"
+          itemName={selectedPlanForPayment.name}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 };

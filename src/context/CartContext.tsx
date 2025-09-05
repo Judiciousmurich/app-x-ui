@@ -1,25 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-
-export interface Meal {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  dietary: string[];
-}
-
-export interface Plan {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  currency: string;
-  mealsPerWeek: number;
-  benefits: string[];
-}
+import { Meal, Plan } from '@/types';
 
 interface CartItem {
   meal: Meal;

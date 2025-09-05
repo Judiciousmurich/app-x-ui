@@ -3,80 +3,20 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Plus, Minus, ShoppingCart, Filter } from 'lucide-react';
-import { useCart, Meal } from '../../../context/CartContext';
+import { useCart } from '../../../context/CartContext';
+import { Meal } from '@/types';
 import { useRouter } from 'next/navigation';
+import { mockMeals } from '@/data/mockData';
+import PaymentModal from '@/components/PaymentModal';
 
 const MealSelection: React.FC = () => {
   const { state, addMeal, removeMeal } = useCart();
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState('All');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedMealForPayment, setSelectedMealForPayment] = useState<Meal | null>(null);
 
-  const meals: Meal[] = [
-    {
-      id: 'grilled-salmon',
-      name: 'Grilled Salmon with Herbs',
-      description: 'Fresh Atlantic salmon with rosemary, lemon, and seasonal vegetables',
-      image: 'https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1850,
-      dietary: ['Protein-Rich', 'Omega-3']
-    },
-    {
-      id: 'chicken-teriyaki',
-      name: 'Chicken Teriyaki Bowl',
-      description: 'Tender chicken with teriyaki glaze, jasmine rice, and steamed vegetables',
-      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1450,
-      dietary: ['High-Protein', 'Asian-Inspired']
-    },
-    {
-      id: 'quinoa-salad',
-      name: 'Mediterranean Quinoa Salad',
-      description: 'Nutrient-packed quinoa with feta, olives, tomatoes, and herbs',
-      image: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1250,
-      dietary: ['Vegetarian', 'Gluten-Free']
-    },
-    {
-      id: 'beef-stew',
-      name: 'Traditional Beef Stew',
-      description: 'Slow-cooked beef with root vegetables and rich aromatic spices',
-      image: 'https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1650,
-      dietary: ['Comfort Food', 'Local Favorite']
-    },
-    {
-      id: 'thai-curry',
-      name: 'Thai Green Curry',
-      description: 'Creamy coconut curry with vegetables and aromatic thai basil',
-      image: 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1550,
-      dietary: ['Spicy', 'Vegan Option']
-    },
-    {
-      id: 'pasta-marinara',
-      name: 'Homemade Pasta Marinara',
-      description: 'Fresh pasta with rich tomato sauce, basil, and parmesan cheese',
-      image: 'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1350,
-      dietary: ['Vegetarian', 'Italian Classic']
-    },
-    {
-      id: 'fish-chips',
-      name: 'Beer-Battered Fish & Chips',
-      description: 'Crispy fish with golden fries and house-made tartar sauce',
-      image: 'https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1750,
-      dietary: ['Comfort Food', 'Local Favorite']
-    },
-    {
-      id: 'veggie-wrap',
-      name: 'Rainbow Veggie Wrap',
-      description: 'Colorful vegetables with hummus in a whole wheat tortilla',
-      image: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?auto=compress&cs=tinysrgb&w=500',
-      price: 1150,
-      dietary: ['Vegan', 'Light & Fresh']
-    }
-  ];
+  const meals = mockMeals.filter(meal => meal.isActive);
 
   const dietaryFilters = ['All', 'Vegetarian', 'Vegan', 'Protein-Rich', 'Comfort Food', 'Light & Fresh'];
 
@@ -101,6 +41,15 @@ const MealSelection: React.FC = () => {
     router.push('/checkout');
   };
 
+  const handleBuyNow = (meal: Meal) => {
+    setSelectedMealForPayment(meal);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = (paymentData: any) => {
+    alert(`Payment successful! You've purchased ${selectedMealForPayment?.name}`);
+    setSelectedMealForPayment(null);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -213,25 +162,124 @@ const MealSelection: React.FC = () => {
                       KES {meal.price.toLocaleString()}
                     </span>
                     
-                    {quantity === 0 ? (
-                      <button
-                        onClick={() => handleAddMeal(meal)}
-                        className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Add</span>
-                      </button>
-                    ) : (
-                      <div className="flex items-center space-x-2">
+                    <div className="flex flex-col space-y-2">
+                      {quantity === 0 ? (
                         <button
-                          onClick={() => handleRemoveMeal(meal.id)}
-                          className="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg transition-colors"
+                          onClick={() => handleAddMeal(meal)}
+                          className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
                         >
-                          <Minus className="h-4 w-4" />
+                          <Plus className="h-4 w-4" />
+                          <span>Add to Cart</span>
                         </button>
-                        <span className="font-semibold text-gray-800 min-w-[2rem] text-center">
-                          {quantity}
-                        </span>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleRemoveMeal(meal.id)}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg transition-colors"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </button>
+                          <span className="font-semibold text-gray-800 min-w-[2rem] text-center">
+                            {quantity}
+                          </span>
+                          <button
+                            onClick={() => handleAddMeal(meal)}
+                            className="bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-lg transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                      
+                      <button
+                        onClick={() => handleBuyNow(meal)}
+                        className="bg-secondary-600 hover:bg-secondary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 text-sm"
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Cart Summary */}
+        {state.totalItems > 0 && (
+          <div className="fixed bottom-6 right-6 bg-white rounded-2xl shadow-2xl p-6 max-w-sm animate-slide-up">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">
+              <ShoppingCart className="h-5 w-5 text-primary-600" />
+              <span>Your Cart</span>
+            </h3>
+            
+            <div className="space-y-2 mb-4 max-h-32 overflow-y-auto">
+              {state.items.map((item) => (
+                <div key={item.meal.id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Image
+                      src={item.meal.image}
+                      alt={item.meal.name}
+                      width={40}
+                      height={40}
+                      className="rounded-lg object-cover"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-800 text-sm">{item.meal.name}</p>
+                      <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    </div>
+                  </div>
+                  <span className="font-semibold text-primary-600 text-sm">
+                    KES {(item.meal.price * item.quantity).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+            
+            <div className="border-t border-gray-200 pt-4">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-bold text-gray-800">Total:</span>
+                <span className="font-bold text-primary-600 text-lg">
+                  KES {state.totalPrice.toLocaleString()}
+                </span>
+              </div>
+              
+              <button
+                onClick={handleProceedToCheckout}
+                className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedMealForPayment && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedMealForPayment(null);
+          }}
+          amount={selectedMealForPayment.price}
+          currency="KES"
+          type="meal"
+          itemName={selectedMealForPayment.name}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
+    </div>
+  );
+};
+
+export default MealSelection;
+                        <button
+                          onClick={() => handleAddMeal(meal)}
+                          className="bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-lg transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
                         <button
                           onClick={() => handleAddMeal(meal)}
                           className="bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-lg transition-colors"
@@ -296,6 +344,22 @@ const MealSelection: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedMealForPayment && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedMealForPayment(null);
+          }}
+          amount={selectedMealForPayment.price}
+          currency="KES"
+          type="meal"
+          itemName={selectedMealForPayment.name}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 };
