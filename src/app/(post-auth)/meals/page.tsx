@@ -50,6 +50,7 @@ const MealSelection: React.FC = () => {
     alert(`Payment successful! You've purchased ${selectedMealForPayment?.name}`);
     setSelectedMealForPayment(null);
   };
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -198,96 +199,6 @@ const MealSelection: React.FC = () => {
                         Buy Now
                       </button>
                     </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Cart Summary */}
-        {state.totalItems > 0 && (
-          <div className="fixed bottom-6 right-6 bg-white rounded-2xl shadow-2xl p-6 max-w-sm animate-slide-up">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">
-              <ShoppingCart className="h-5 w-5 text-primary-600" />
-              <span>Your Cart</span>
-            </h3>
-            
-            <div className="space-y-2 mb-4 max-h-32 overflow-y-auto">
-              {state.items.map((item) => (
-                <div key={item.meal.id} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Image
-                      src={item.meal.image}
-                      alt={item.meal.name}
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover"
-                    />
-                    <div>
-                      <p className="font-medium text-gray-800 text-sm">{item.meal.name}</p>
-                      <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                    </div>
-                  </div>
-                  <span className="font-semibold text-primary-600 text-sm">
-                    KES {(item.meal.price * item.quantity).toLocaleString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-            
-            <div className="border-t border-gray-200 pt-4">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-bold text-gray-800">Total:</span>
-                <span className="font-bold text-primary-600 text-lg">
-                  KES {state.totalPrice.toLocaleString()}
-                </span>
-              </div>
-              
-              <button
-                onClick={handleProceedToCheckout}
-                className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Payment Modal */}
-      {showPaymentModal && selectedMealForPayment && (
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => {
-            setShowPaymentModal(false);
-            setSelectedMealForPayment(null);
-          }}
-          amount={selectedMealForPayment.price}
-          currency="KES"
-          type="meal"
-          itemName={selectedMealForPayment.name}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
-    </div>
-  );
-};
-
-export default MealSelection;
-                        <button
-                          onClick={() => handleAddMeal(meal)}
-                          className="bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-lg transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                        <button
-                          onClick={() => handleAddMeal(meal)}
-                          className="bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-lg transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
