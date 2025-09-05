@@ -97,9 +97,9 @@ const MealSelection: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
-            Our Delicious
+            Fresh, Flavorful Meals
             <br />
-            <span className="text-primary-600">Kenyan Meals</span>
+            <span className="text-primary-400">Delivered to You</span>
           </h1>
           
           {/* Subscription Status */}
@@ -121,7 +121,7 @@ const MealSelection: React.FC = () => {
           {!userPlan && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 inline-block">
               <p className="text-yellow-800 font-medium">
-                💡 Subscribe to a plan for better value, or purchase meals individually
+                💡 Subscribe to a plan to start selecting your weekly meals
               </p>
               <button
                 onClick={() => router.push('/plans')}
@@ -170,14 +170,11 @@ const MealSelection: React.FC = () => {
           {filteredMeals.map((meal, index) => {
             const quantity = getItemQuantity(meal.id);
             const canAdd = canAddToCart(meal);
-            const isInUserPlan = userPlan?.meals.some(planMeal => planMeal.id === meal.id) || false;
             
             return (
               <div
                 key={meal.id}
-                className={`group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 animate-slide-up ${
-                  !canAdd && userPlan ? 'opacity-75' : ''
-                }`}
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {/* Meal Image */}
@@ -193,16 +190,6 @@ const MealSelection: React.FC = () => {
                     {quantity > 0 && (
                       <span className="bg-primary-600 text-white rounded-full px-3 py-1 text-sm font-semibold shadow-lg">
                         {quantity}
-                      </span>
-                    )}
-                    {userPlan && isInUserPlan && (
-                      <span className="bg-secondary-600 text-white rounded-full px-2 py-1 text-xs font-semibold shadow-lg ml-2">
-                        In Plan
-                      </span>
-                    )}
-                    {userPlan && !isInUserPlan && (
-                      <span className="bg-gray-600 text-white rounded-full px-2 py-1 text-xs font-semibold shadow-lg ml-2">
-                        Individual
                       </span>
                     )}
                   </div>
@@ -234,8 +221,18 @@ const MealSelection: React.FC = () => {
                       KES {meal.price.toLocaleString()}
                     </span>
                     
-                    <div className="flex flex-col space-y-2">
-                      {canAdd && quantity === 0 ? (
+                    <div>
+                      {!userPlan ? (
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500 mb-2">Subscribe to add meals</p>
+                          <button
+                            onClick={() => router.push('/plans')}
+                            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                          >
+                            <span>View Plans</span>
+                          </button>
+                        </div>
+                      ) : canAdd && quantity === 0 ? (
                         <button
                           onClick={() => handleAddMeal(meal)}
                           className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
@@ -261,34 +258,13 @@ const MealSelection: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </button>
                         </div>
-                      ) : !canAdd && userPlan ? (
+                      ) : userPlan && !canAdd ? (
                         <div className="text-center">
                           <p className="text-xs text-gray-500 mb-2">Not in your plan</p>
-                          <button
-                            onClick={() => handleBuyNow(meal)}
-                            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 text-sm"
-                          >
-                            Buy Individual
-                          </button>
+                          <div className="bg-gray-100 text-gray-500 px-4 py-2 rounded-xl text-sm">
+                            Not Available
+                          </div>
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => handleBuyNow(meal)}
-                          className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-                        >
-                          <Plus className="h-4 w-4" />
-                          <span>Buy Now</span>
-                        </button>
-                      )}
-                      
-                      {/* Always show Buy Now as secondary option for subscribers */}
-                      {canAdd && (
-                        <button
-                          onClick={() => handleBuyNow(meal)}
-                          className="bg-secondary-600 hover:bg-secondary-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 text-sm"
-                        >
-                          Buy Individual
-                        </button>
                       )}
                     </div>
                   </div>
@@ -333,10 +309,7 @@ const MealSelection: React.FC = () => {
               <div className="flex justify-between items-center mb-4">
                 <span className="font-bold text-gray-800">Total:</span>
                 <span className="font-bold text-primary-600 text-lg">
-                  {userPlan 
-                    ? `${state.totalItems}/${userPlan.mealsPerWeek} meals selected`
-                    : `KES ${state.totalPrice.toLocaleString()}`
-                  }
+                  {state.totalItems}/{userPlan?.mealsPerWeek} meals selected
                 </span>
               </div>
               
@@ -344,31 +317,12 @@ const MealSelection: React.FC = () => {
                 onClick={handleProceedToCheckout}
                 className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
               >
-                {userPlan 
-                  ? `Confirm Selection (${state.totalItems}/${userPlan.mealsPerWeek})`
-                  : 'Proceed to Checkout'
-                }
+                Confirm Selection ({state.totalItems}/{userPlan?.mealsPerWeek})
               </button>
             </div>
           </div>
         )}
       </div>
-
-      {/* Payment Modal for individual purchases */}
-      {showPaymentModal && selectedMealForPayment && (
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => {
-            setShowPaymentModal(false);
-            setSelectedMealForPayment(null);
-          }}
-          amount={selectedMealForPayment.price}
-          currency="KES"
-          type="meal"
-          itemName={selectedMealForPayment.name}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
     </div>
   );
 };

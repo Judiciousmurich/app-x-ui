@@ -244,10 +244,7 @@ const Checkout: React.FC = () => {
               <div className="flex justify-between items-center text-xl font-bold">
                 <span className="text-gray-800">Total Amount:</span>
                 <span className="text-primary-600">
-                  {userPlan && user?.subscription?.status === 'active' 
-                    ? 'No additional cost' 
-                    : `KES ${totalAmount.toLocaleString()}`
-                  }
+                  No additional cost
                 </span>
               </div>
             </div>
@@ -257,55 +254,27 @@ const Checkout: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-2">
                 <Shield className="h-6 w-6 text-secondary-600" />
                 <span>
-                  {userPlan && user?.subscription?.status === 'active' 
-                    ? 'Confirm Selection' 
-                    : 'Secure Payment'
-                  }
+                  Confirm Selection
                 </span>
               </h2>
               
-              {userPlan && user?.subscription?.status === 'active' ? (
-                <div className="space-y-4">
-                  <div className="bg-secondary-50 border border-secondary-200 rounded-xl p-4 mb-4">
-                    <p className="text-secondary-800 font-medium">
-                      ✓ You have an active subscription. These meals are included in your plan.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handlePayment('mpesa')}
-                    className="w-full group bg-primary-600 hover:bg-primary-700 text-white p-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105"
-                  >
-                    Confirm Meal Selection
-                  </button>
+              <div className="space-y-4">
+                <div className="bg-secondary-50 border border-secondary-200 rounded-xl p-4 mb-4">
+                  <p className="text-secondary-800 font-medium">
+                    ✓ You have an active subscription. These meals are included in your plan.
+                  </p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* M-PESA Payment */}
-                  <button
-                    onClick={() => handlePayment('mpesa')}
-                    className="w-full group bg-secondary-600 hover:bg-secondary-700 text-white p-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
-                  >
-                    <Smartphone className="h-6 w-6 group-hover:scale-110 transition-transform" />
-                    <span>Pay with M-PESA</span>
-                  </button>
-
-                  {/* Crypto Payment */}
-                  <button
-                    onClick={() => handlePayment('crypto')}
-                    className="w-full group bg-accent-600 hover:bg-accent-700 text-white p-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
-                  >
-                    <CreditCard className="h-6 w-6 group-hover:scale-110 transition-transform" />
-                    <span>Pay with Crypto</span>
-                  </button>
-                </div>
-              )}
+                <button
+                  onClick={() => handlePayment('mpesa')}
+                  className="w-full group bg-primary-600 hover:bg-primary-700 text-white p-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  Confirm Meal Selection
+                </button>
+              </div>
               
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-500">
-                  {userPlan && user?.subscription?.status === 'active' 
-                    ? 'Your meal selection will be processed securely'
-                    : 'Your payment is secured with 256-bit SSL encryption'
-                  }
+                  Your meal selection will be processed securely
                 </p>
               </div>
             </div>

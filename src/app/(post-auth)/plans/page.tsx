@@ -56,13 +56,13 @@ const Plans: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-16 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
-            Choose Your
+            Fresh, Flavorful Meals
             <br />
-            <span className="text-primary-600">Meal Plan</span>
+            <span className="text-primary-400">Delivered to You</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            From budget-friendly options to premium dining experiences, find the perfect
-            meal plan that fits your lifestyle and budget.
+            Experience Kenya's finest meal subscription service with chef-curated dishes,
+            premium ingredients, and flexible delivery options.
           </p>
         </div>
 
