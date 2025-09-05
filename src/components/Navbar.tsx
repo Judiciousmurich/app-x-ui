@@ -36,13 +36,12 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
-            {/* <ChefHat className="h-8 w-8 text-primary-600 group-hover:text-primary-700 transition-colors" /> */}
             <Image
-              src="/logo.png" // update with your actual logo path inside public/
+              src="/logo.png" 
               alt="Foodies Kitchen Logo"
               width={40}
               height={40}
-              className="rounded-full" // optional styling
+              className="" 
             />
             <span className="text-xl font-bold text-gray-800">Foodies Kitchen</span>
           </Link>

@@ -32,12 +32,6 @@ const ForgotPassword: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-cream-50 to-primary-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8">
-                    <div className="text-center">
-                        <Link href="/" className="inline-flex items-center space-x-2 group mb-8">
-                            <ChefHat className="h-10 w-10 text-primary-600 group-hover:text-primary-700 transition-colors" />
-                            <span className="text-2xl font-bold text-gray-800">Foodies Kitchen</span>
-                        </Link>
-                    </div>
 
                     <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
                         <div className="mb-6">
@@ -81,10 +75,6 @@ const ForgotPassword: React.FC = () => {
             <div className="max-w-md w-full space-y-8">
                 {/* Header */}
                 <div className="text-center">
-                    <Link href="/" className="inline-flex items-center space-x-2 group mb-8">
-                        <ChefHat className="h-10 w-10 text-primary-600 group-hover:text-primary-700 transition-colors" />
-                        <span className="text-2xl font-bold text-gray-800">Foodies Kitchen</span>
-                    </Link>
                     <h2 className="text-3xl font-bold text-gray-800 mb-2">Reset Your Password</h2>
                     <p className="text-gray-600">Enter your email to receive a reset link</p>
                 </div>
