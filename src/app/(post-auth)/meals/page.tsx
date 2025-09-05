@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { mockMeals, mockPlans } from '@/data/mockData';
 import PaymentModal from '@/components/PaymentModal';
 
-const MealSelection: React.FC = () => {
+const MealSelection = () => {
   const { state, addMeal, removeMeal } = useCart();
   const { user } = useUser();
   const router = useRouter();
