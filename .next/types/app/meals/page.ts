@@ -1,8 +1,8 @@
-// File: C:\Users\amosm\Documents\builds\CI\foodie-kitchen\foodie-kitchen\app\meals\page.tsx
-import * as entry from '../../../../app/meals/page.js'
+// File: C:\Users\amosm\Documents\builds\CI\foodie-kitchen\foodie-kitchen\src\app\meals\page.tsx
+import * as entry from '../../../../src/app/(post-auth)/meals/page.jsx'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../../app/meals/page.js')
+type TEntry = typeof import('../../../../src/app/(post-auth)/meals/page.jsx')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{
