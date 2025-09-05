@@ -90,12 +90,18 @@ const Navbar: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <button className="text-gray-700 hover:text-primary-600 transition-colors">
+                <Link
+                  href="/auth/login"
+                  className="text-gray-700 hover:text-primary-600 transition-colors"
+                >
                   Login
-                </button>
-                <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
                   Sign Up
-                </button>
+                </Link>
               </div>
             )}
           </div>
@@ -156,12 +162,18 @@ const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <button className="w-full text-left text-gray-700 hover:text-primary-600 transition-colors">
+                  <Link
+                    href="/auth/login"
+                    className="w-full text-left text-gray-700 hover:text-primary-600 transition-colors block"
+                  >
                     Login
-                  </button>
-                  <button className="w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors block text-center"
+                  >
                     Sign Up
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
